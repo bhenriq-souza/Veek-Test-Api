@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "mysql": "^2.15.0",
+    "mysql-migrations": "^1.0.6",
     "nodemon": "^1.17.4"
   },
   "scripts": {

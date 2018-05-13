@@ -7,6 +7,12 @@
   "author": "Bruno Henrique de Souza",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "mysql": "^2.15.0",
+    "nodemon": "^1.17.4"
+  },
+  "scripts": {
+    "start": "PORT=4200 node server.js",
+    "dev": "NODE_ENV=test PORT=4205 nodemon server.js"
   }
 }

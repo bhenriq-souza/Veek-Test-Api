@@ -1,0 +1,9 @@
+{
+  "name": "Veek-Test-Api",
+  "version": "1.0.0",
+  "description": "Aplicação teste para processo de seleção Veek.",
+  "main": "index.js",
+  "repository": "https://github.com/bhenriq-souza/Veek-Test-Api.git",
+  "author": "Bruno Henrique de Souza",
+  "license": "MIT"
+}

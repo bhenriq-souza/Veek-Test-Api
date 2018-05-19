@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const userService = require('../bll/users');
 
+/**
+ * Insert user and get all users routes.
+ */
 router.route('/')
     .post( (req, res) => { 
         try {
@@ -38,6 +41,9 @@ router.route('/')
         }
     });
 
+/**
+ * Get user by id, delete and update user routes.
+ */
 router.route('/:id')
       .get( (req, res) => {
         try {
@@ -60,11 +66,27 @@ router.route('/:id')
       .delete( (req, res) => {
         try {
             let userId = req.params.id;
-            userService.deleteUser( userId, (error, result) => {                
+            userService.deleteUser( userId, (error) => {                
                 if(error) {
                     res.status(404).send(error.toString());
                 } else {
                     res.status(200).send('User deleted.');
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.toString() });
+        }
+      })
+      .put( (req, res) => {
+        try {            
+            let user = {};
+            user = req.body;
+            user.id = req.params.id;
+            userService.updateUser( user, (error) => {                
+                if(error) {
+                    res.status(404).send(error.toString());
+                } else {
+                    res.status(200).send('User updated.');
                 }
             });
         } catch (error) {

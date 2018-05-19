@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const pool = require('../../config/database/index');
 
 /**
- * Execute generic query, with parameters and without return fields.
+ * Execute generic query with parameters.
  * @param {String} query 
  * @param {Array} params
  */
@@ -12,7 +12,7 @@ function executeQuery (query, params, callback) {
             if(error) {
                 throw new Error(error);
             }
-            if(params.length > 0) {
+            if(params && params.length) {
                 query = mysql.format(query, params);
             }
             connection.query(query, callback);
@@ -33,12 +33,21 @@ function insertUser (user, callback) {
         let params = [];
         params.push(user.name);
         params.push(user.email);
-        ExecuteQuery(query, params, callback);
+        executeQuery(query, params, callback);
     }      
 }
 
+/**
+ * Get all users
+ */
+function getAllUsers (callback) {
+    let query = "SELECT * FROM user;";
+    executeQuery(query, null, callback);
+}
+
 const userService = {
-    insertUser: insertUser
+    insertUser: insertUser,
+    getAllUsers: getAllUsers
 }
 
 module.exports = userService;

@@ -13,7 +13,7 @@ router.route('/')
             if(req.body.email) {
                 user.email = req.body.email;
             }
-            userService.insertUser(user, (error, result, fields) => {
+            userService.insertUser(user, (error) => {
                 if(error) {
                     throw new Error(error);
                 } else {
@@ -23,6 +23,19 @@ router.route('/')
         } catch (error) {
             res.status(500).json({ error: error.toString() });
         }            
+    })
+    .get( (req, res) => {
+        try {
+            userService.getAllUsers( (error, result) => {                
+                if(error) {
+                    throw new Error(error);
+                } else {
+                    res.status(200).json({ result: result });
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.toString() });
+        }
     });
     
 module.exports = router;

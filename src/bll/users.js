@@ -3,8 +3,9 @@ const pool = require('../../config/database/index');
 
 /**
  * Execute generic query with parameters.
- * @param {String} query 
- * @param {Array} params
+ * @param {String} query Query to execute.
+ * @param {Array} params Parameter, if exists.
+ * @callback Callback Request callback.
  */
 function executeQuery (query, params, callback) {
     try {
@@ -25,7 +26,8 @@ function executeQuery (query, params, callback) {
 
 /**
  * Insert new user.
- * @param {Object} user
+ * @param {Object} user User to be inserted.
+ * @callback Callback Request callback.
  */
 function insertUser (user, callback) { 
     if(user) {
@@ -39,15 +41,29 @@ function insertUser (user, callback) {
 
 /**
  * Get all users
+ * @callback Callback Request callback.
  */
 function getAllUsers (callback) {
     let query = "SELECT * FROM user;";
     executeQuery(query, null, callback);
 }
 
+/**
+ * Get user by id.
+ * @param {Number} userId User id.
+ * @callback Callback Request callback.
+ */
+function getUserById (userId, callback) {
+    let query = "SELECT * FROM user WHERE id = ?;";
+    let params = [];
+    params.push(userId);
+    executeQuery(query, params, callback);
+}
+
 const userService = {
     insertUser: insertUser,
-    getAllUsers: getAllUsers
+    getAllUsers: getAllUsers,
+    getUserById: getUserById
 }
 
 module.exports = userService;

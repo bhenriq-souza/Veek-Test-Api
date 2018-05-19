@@ -25,8 +25,26 @@ router.route('/')
         }            
     })
     .get( (req, res) => {
+        try {            
+            if(userId) {
+                userService.getAllUsers( (error, result) => {                
+                    if(error) {
+                        throw new Error(error);
+                    } else {
+                        res.status(200).json({ result: result });
+                    }
+                });
+            }            
+        } catch (error) {
+            res.status(500).json({ error: error.toString() });
+        }
+    });
+
+router.route('/:id')
+      .get( (req, res) => {
         try {
-            userService.getAllUsers( (error, result) => {                
+            let userId = req.params.id;
+            userService.getUserById( userId, (error, result) => {                
                 if(error) {
                     throw new Error(error);
                 } else {
@@ -36,6 +54,6 @@ router.route('/')
         } catch (error) {
             res.status(500).json({ error: error.toString() });
         }
-    });
+      });
     
 module.exports = router;

@@ -1,21 +1,44 @@
+const mysql = require('mysql');
 const pool = require('../../config/database/index');
 
-async function InsertUser (user) { 
+/**
+ * Execute generic query, with parameters and without return fields.
+ * @param {String} query 
+ * @param {Array} params
+ */
+function executeQuery (query, params, callback) {
     try {
-        if(user) {
-            let conn = await pool.getConnection();
-            let query = `INSERT user VALUES(0,'${user.name}','${user.email}', CURDATE())`;
-            let result = await conn.query(query);
-            conn.end();
-            return true;
-        }
-    } catch (err) {
-        throw new Error(err);
-    }     
+        pool.getConnection( (error, connection) => {
+            if(error) {
+                throw new Error(error);
+            }
+            if(params.length > 0) {
+                query = mysql.format(query, params);
+            }
+            connection.query(query, callback);
+            connection.release();            
+        });
+    } catch (error) {
+        callback(error);
+    }
 }
 
-const UserService = {
-    insertUser: InsertUser
+/**
+ * Insert new user.
+ * @param {Object} user
+ */
+function insertUser (user, callback) { 
+    if(user) {
+        let query = 'INSERT user VALUES(0, ?, ?, CURDATE());';
+        let params = [];
+        params.push(user.name);
+        params.push(user.email);
+        ExecuteQuery(query, params, callback);
+    }      
 }
 
-module.exports = UserService;
+const userService = {
+    insertUser: insertUser
+}
+
+module.exports = userService;

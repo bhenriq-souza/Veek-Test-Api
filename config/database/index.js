@@ -10,6 +10,6 @@ const config = {
 
 const pool = mysql.createPool(config);
 
-pool.query = util.promisify(pool.query)
+pool.query = util.promisify(pool.query);
 
 module.exports = pool;

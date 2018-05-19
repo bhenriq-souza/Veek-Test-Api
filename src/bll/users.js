@@ -60,10 +60,33 @@ function getUserById (userId, callback) {
     executeQuery(query, params, callback);
 }
 
+/**
+ * Delete user by id.
+ * @param {Number} userId User id.
+ * @callback Callback Request callback.
+ */
+function deleteUser (userId, callback) {
+    // Search for the user in DB.
+    let select = "SELECT * FROM user WHERE id = ?;"
+    let params = [];
+    params.push(userId);
+    executeQuery(select, params, (error, result) => {
+        if(error) callback(error);
+        // If the user was found, execute the delete.
+        if(result && result.length) {
+            let query = "DELETE FROM user WHERE id = ?;";    
+            executeQuery(query, params, callback);
+        } else {
+            callback(new Error('User not found'));
+        }
+    });
+}
+
 const userService = {
     insertUser: insertUser,
     getAllUsers: getAllUsers,
-    getUserById: getUserById
+    getUserById: getUserById,
+    deleteUser: deleteUser
 }
 
 module.exports = userService;

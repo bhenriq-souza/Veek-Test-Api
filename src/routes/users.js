@@ -26,15 +26,13 @@ router.route('/')
     })
     .get( (req, res) => {
         try {            
-            if(userId) {
-                userService.getAllUsers( (error, result) => {                
-                    if(error) {
-                        throw new Error(error);
-                    } else {
-                        res.status(200).json({ result: result });
-                    }
-                });
-            }            
+            userService.getAllUsers( (error, result) => {                
+                if(error) {
+                    throw new Error(error);
+                } else {
+                    res.status(200).json({ result: result });
+                }
+            });           
         } catch (error) {
             res.status(500).json({ error: error.toString() });
         }
@@ -48,7 +46,25 @@ router.route('/:id')
                 if(error) {
                     throw new Error(error);
                 } else {
-                    res.status(200).json({ result: result });
+                    if(result && result.length) {
+                        res.status(200).json({ result: result });
+                    } else {
+                        res.status(404).send('User not found.');
+                    }
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.toString() });
+        }
+      })
+      .delete( (req, res) => {
+        try {
+            let userId = req.params.id;
+            userService.deleteUser( userId, (error, result) => {                
+                if(error) {
+                    res.status(404).send(error.toString());
+                } else {
+                    res.status(200).send('User deleted.');
                 }
             });
         } catch (error) {

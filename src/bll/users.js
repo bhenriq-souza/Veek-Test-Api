@@ -1,5 +1,8 @@
+const csv = require('csv');
+const fs = require('fs');
 const mysql = require('mysql');
 const pool = require('../../config/database/index');
+const User = require('../model/User');
 
 /**
  * Execute generic query with parameters.
@@ -86,6 +89,11 @@ function deleteUser (userId, callback) {
     }    
 }
 
+/**
+ * Update user by id.
+ * @param {Number} userId User id.
+ * @callback Callback Request callback.
+ */
 function updateUser (user, callback) {
     if(user) {
         // Search for the user in DB.
@@ -107,12 +115,51 @@ function updateUser (user, callback) {
     }
 }
 
+/**
+ * Insert users from file uploaded.
+ * @param {Object} file File received
+ * @callback Callback Request callback.
+ */
+function insertUserFromFile (file, callback) {
+    fs.createReadStream(file.path).pipe(createParser(';', file, callback));
+}
+
+/**
+ * Create parser to be used in file reading.
+ * @param {String} delimiter Limiting string
+ * @param {Object} file File received
+ * @callback Callback Request callback.
+ */
+function createParser(delimiter, file, callback) {
+    return csv.parse({ delimiter: delimiter }, (err, data) => {        
+        let errors = [];
+        data.forEach(element => {
+            let user = new User(...element);
+            insertUser(user, (error, result, fields) => {
+                if(error) {
+                    let err = {};
+                    err.message = err;
+                    err.user = user.name;
+                    errors.push(err);
+                }          
+            });
+        });
+        if(errors && errors.length) {
+            fs.unlink(file.path);
+            callback(errors, `${errors.length} failed.`);
+        }
+        fs.unlink(file.path);
+        callback(null, `${data.length} users added successfully.`);
+    });
+}
+
 const userService = {
     insertUser: insertUser,
     getAllUsers: getAllUsers,
     getUserById: getUserById,
     deleteUser: deleteUser,
-    updateUser: updateUser
+    updateUser: updateUser,
+    insertUserFromFile: insertUserFromFile
 }
 
 module.exports = userService;

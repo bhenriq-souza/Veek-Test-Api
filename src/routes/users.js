@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const userService = require('../bll/users');
 
+const multer = require('multer');
+const upload = multer({ dest: './out' }).single('file');
+
 /**
  * Insert user and get all users routes.
  */
@@ -87,6 +90,25 @@ router.route('/:id')
                     res.status(404).send(error.toString());
                 } else {
                     res.status(200).send('User updated.');
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ error: error.toString() });
+        }
+      });
+
+router.route('/upload')
+      .post((req, res) => {
+        try {
+            upload(req, res, (err) => {
+                if(err) throw new Error(err);
+                if(req.file) {
+                    userService.insertUserFromFile(req.file, (errors, msg) => {
+                        if(errors && errors.length) {
+                            res.status(200).send({ errors: errors });
+                        }
+                        res.status(200).send({ msg: msg});
+                    });
                 }
             });
         } catch (error) {
